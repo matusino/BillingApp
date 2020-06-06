@@ -10,16 +10,21 @@ public class ExchangeRate {
 
     @Id
     private String id;
-    private String exchangeRateValue;
+    private double exchangeRateValue;
 
     @Indexed(direction = IndexDirection.ASCENDING )
     private String date;
-    private Currency currency;
 
-    public ExchangeRate(String exchangeRateValue, String date, Currency currency) {
+    private Currency currencyFrom;
+
+    private Currency currencyTo;
+
+    public ExchangeRate(String id, double exchangeRateValue, String date, Currency currencyFrom, Currency currencyTo) {
+        this.id = id;
         this.exchangeRateValue = exchangeRateValue;
         this.date = date;
-        this.currency = currency;
+        this.currencyFrom = currencyFrom;
+        this.currencyTo = currencyTo;
     }
 
     public ExchangeRate() {
@@ -33,11 +38,11 @@ public class ExchangeRate {
         this.id = id;
     }
 
-    public String getExchangeRateValue() {
+    public double getExchangeRateValue() {
         return exchangeRateValue;
     }
 
-    public void setExchangeRateValue(String exchangeRateValue) {
+    public void setExchangeRateValue(double exchangeRateValue) {
         this.exchangeRateValue = exchangeRateValue;
     }
 
@@ -49,11 +54,30 @@ public class ExchangeRate {
         this.date = date;
     }
 
-    public Currency getCurrency() {
-        return currency;
+    public Currency getCurrencyFrom() {
+        return currencyFrom;
     }
 
-    public void setCurrency(Currency currency) {
-        this.currency = currency;
+    public void setCurrencyFrom(Currency currencyFrom) {
+        this.currencyFrom = currencyFrom;
+    }
+
+    public Currency getCurrencyTo() {
+        return currencyTo;
+    }
+
+    public void setCurrencyTo(Currency currencyTo) {
+        this.currencyTo = currencyTo;
+    }
+
+    @Override
+    public String toString() {
+        return "ExchangeRate{" +
+                "id='" + id + '\'' +
+                ", exchangeRateValue=" + exchangeRateValue +
+                ", date='" + date + '\'' +
+                ", currencyFrom=" + currencyFrom +
+                ", currencyTo=" + currencyTo +
+                '}';
     }
 }

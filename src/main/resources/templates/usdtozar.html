@@ -7,31 +7,41 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link th:href="@{/css/style.css}" rel="stylesheet" media="screen">
 
-    <title>Exchange rate</title>
+    <title>USD TO ZAR</title>
 </head>
 <body>
 <div class="container-fluid">
     <div class="wrapper">
-        <h1>Currency converter</h1>
-        <h4>-</h4>
-        <a th:href="@{/get-new-exchange}" class="btn btn-secondary">Get today rate</a>
-        <form method="post" class="form-horizontal">
+        <h1>Currency converter USD/ZAR</h1>
+        <h4 th:text="${exchangeRate.exchangeRateValue} ?: '-'"></h4>
+        <form th:action="@{/convert/usd-to-zar}" th:object="${converter}" method="post" class="form-horizontal">
             <fieldset>
                 <div class="row">
-                    <div class="form-group col-md-4">
-                        <label for="USD" class="col-md-4 control-label">FROM USD</label>
-                        <input type="number" id="USD" name="USD" class="form-control input-md">
+                    <div class="form-group col-md-3">
+                        <label for="amount" class="col-md-4 control-label">Amount </label>
+                        <input type="number" id="amount" name="amount" th:field="*{amount}" class="form-control input-md">
                     </div>
-                    <div class="col-md-4">
+                    <div class="form-group col-md-2">
+                        <label for="ZAR" class="col-md-4 control-label">FROM</label>
+                        <div class="zar">
+                            <img th:src="@{/images/SA_flag.png}" id="ZAR" class="zar-flag" alt="FLAG"><p>South African Rand</p>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
                         <a th:href="@{/currency-converter/zar-to-usd}">
                             <img th:src="@{/images/double_arrow.png}" alt="doubleArrow">
                         </a>
                     </div>
-                    <div class="form-group col-md-4">
-                        <label for="ZAR" class="col-md-4 control-label">TO ZAR</label>
-                        <input type="number" id="ZAR" name="ZAR" class="form-control input-md">
+                    <div class="form-group col-md-2">
+                        <label for="USD" class="col-md-4 control-label">TO</label>
+                        <div>
+                            <img th:src="@{/images/US_flag.png}" id="USD" class="zar-flag" alt="FLAG"><p>US Dollar</p>
+                        </div>
                     </div>
+                    <span th:text="${#numbers.formatDecimal(converter.result, 0, 'COMMA', 2, 'POINT')}">10.00></span>
                 </div>
+                <button>Convert</button>
+                <!--sem dat mozno nejaky obrazok sipky? aby to konvertovalo-->
             </fieldset>
         </form>
     </div>
