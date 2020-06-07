@@ -9,7 +9,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -34,19 +33,25 @@ public class CurrencyConverterController {
         }else {
             for (ExchangeRate exchangeRate : exchangeRateDB){
                 if(exchangeRate.getCurrencyFrom().equals(Currency.USD)){
-                    Long amount = Long.parseLong(converter.getAmount());
-                    double roundOff = (double) Math.round((amount*exchangeRate.getExchangeRateValue()) * 100) / 100;
-                    String result = String.valueOf(roundOff);
-                    model.addAttribute("exchangeRate", exchangeRate);
-                    model.addAttribute("converter", new CurrencyConverter(converter.getAmount(), converter.getExchangeRateValue(), result));
-                    return "usdtozar";
+                    if(!converter.getAmount().isEmpty()){
+                        double amount = Double.parseDouble(converter.getAmount());
+                        double roundOff = (double) Math.round((amount/exchangeRate.getExchangeRateValue()) * 100) / 100;
+                        String result = String.valueOf(roundOff);
+                        model.addAttribute("exchangeRate", exchangeRate);
+                        model.addAttribute("converter", new CurrencyConverter(converter.getAmount(), converter.getExchangeRateValue(), result));
+                        return "usdtozar";
+                    }else {
+                        model.addAttribute("exchangeRate", exchangeRate);
+                        model.addAttribute("converter", new CurrencyConverter());
+                        return "usdtozar";
+                    }
                 }
             }
         }
         return "usdtozar";
     }
 
-    @RequestMapping(value = "/convert/usd-to-zar")
+    @RequestMapping(value = "/convert/zar-to-usd")
     public String convertZarToUsd(@ModelAttribute CurrencyConverter converter, Model model){
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy");
         LocalDateTime now = LocalDateTime.now();
@@ -56,13 +61,19 @@ public class CurrencyConverterController {
             return "main";
         }else {
             for (ExchangeRate exchangeRate : exchangeRateDB){
-                if(exchangeRate.getCurrencyFrom().equals(Currency.USD)){
-                    Long amount = Long.parseLong(converter.getAmount());
-                    double roundOff = (double) Math.round((amount*exchangeRate.getExchangeRateValue()) * 100) / 100;
-                    String result = String.valueOf(roundOff);
-                    model.addAttribute("exchangeRate", exchangeRate);
-                    model.addAttribute("converter", new CurrencyConverter(converter.getAmount(), converter.getExchangeRateValue(), result));
-                    return "zartousd";
+                if(exchangeRate.getCurrencyFrom().equals(Currency.ZAR)){
+                    if(!converter.getAmount().isEmpty()){
+                        double amount = Double.parseDouble(converter.getAmount());
+                        double roundOff = (double) Math.round((amount/exchangeRate.getExchangeRateValue()) * 100) / 100;
+                        String result = String.valueOf(roundOff);
+                        model.addAttribute("exchangeRate", exchangeRate);
+                        model.addAttribute("converter", new CurrencyConverter(converter.getAmount(), converter.getExchangeRateValue(), result));
+                        return "zartousd";
+                    }else {
+                        model.addAttribute("exchangeRate", exchangeRate);
+                        model.addAttribute("converter", new CurrencyConverter());
+                        return "zartousd";
+                    }
                 }
             }
         }
