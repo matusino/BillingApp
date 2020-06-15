@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <script src="https://kit.fontawesome.com/3e4f3f39b8.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
     <link th:href="@{/css/style.css}" rel="stylesheet" media="screen">
 
     <title>USD TO ZAR</title>
@@ -13,7 +14,13 @@
 <div class="container-fluid">
     <div class="wrapper">
         <h1>Currency converter USD/ZAR</h1>
-        <h4 th:text="${exchangeRate.exchangeRateValue} ?: '-'"></h4>
+        <div th:if="${exchangeRate.exchangeRateValue == null}">
+            <h5 th:text="${#temporals.format(today, 'dd-MM-yyyy') + ' -please get the current rate'}"></h5>
+            <a th:href="@{/get-new-exchange}" class="btn btn-secondary">Get today rate</a>
+        </div>
+        <div th:unless="${exchangeRate.exchangeRateValue == null}">
+            <h4 th:text="${'1 ZAR = ' + exchangeRate.exchangeRateValue + ' USD'}"></h4>
+        </div>
         <form th:action="@{/convert/zar-to-usd}" th:object="${converter}" method="post" class="form-horizontal">
             <fieldset>
                 <div class="row">
@@ -40,11 +47,31 @@
                     </div>
                 </div>
                 <h1 th:if="${converter.result != null}"
-                    th:text="${#numbers.formatDecimal(converter.amount, 0, 'COMMA', 2, 'POINT')} + ' USD = ' + ${#numbers.formatDecimal(converter.result, 0, 'COMMA', 2, 'POINT')} + ' ZAR'"></h1>
+                    th:text="${#numbers.formatDecimal(converter.amount, 0, 'COMMA', 4, 'POINT')} + ' USD = ' + ${#numbers.formatDecimal(converter.result, 0, 'COMMA', 2, 'POINT')} + ' ZAR'"></h1>
                 <button>Convert</button>
-                <!--sem dat mozno nejaky obrazok sipky? aby to konvertovalo-->
             </fieldset>
         </form>
+        <div class="row">
+            <div class="col-md-3">
+                <h5>Monthly Average = <b th:text="${#numbers.formatDecimal(average, 0, 'COMMA', 4, 'POINT')}"></b><p th:text="${'('+#dates.monthName(#dates.createNow())+')'}"></p></h5>
+                <table id="myTable" class="table table-striped" cellspacing="0" width="100%">
+                    <thead>
+                    <tr>
+                        <th>Date (MM/DD/YYY)</th>
+                        <th>Exchange Rate</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="pastRates : ${lisOfRates}">
+                        <td th:text="${pastRates.date}"></td>
+                        <td th:text="${pastRates.exchangeRateValue}"></td>
+                    </tr>
+                    </tbody>
+
+                </table>
+                <a th:href=@{/} class="btn btn-success">Adjust manually</a>
+            </div>
+        </div>
     </div>
 </div>
 

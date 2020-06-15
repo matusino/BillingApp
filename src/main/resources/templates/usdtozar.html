@@ -14,7 +14,13 @@
 <div class="container-fluid">
     <div class="wrapper">
         <h1>Currency converter USD/ZAR</h1>
-        <h4 th:text="${exchangeRate.exchangeRateValue} ?: '-'"></h4>
+        <div th:if="${exchangeRate.exchangeRateValue == null}">
+            <h5 th:text="${#temporals.format(today, 'dd-MM-yyyy') + ' -please get the current rate'}"></h5>
+            <a th:href="@{/get-new-exchange/{USD}}" class="btn btn-secondary">Get today rate</a>
+        </div>
+        <div th:unless="${exchangeRate.exchangeRateValue == null}">
+            <h4 th:text="${'1 USD = ' + exchangeRate.exchangeRateValue + ' ZAR'}"></h4>
+        </div>
         <form th:action="@{/convert/usd-to-zar}" th:object="${converter}" method="post" class="form-horizontal">
             <fieldset>
                 <div class="row">
@@ -32,7 +38,7 @@
                     </div>
                     <div class="col-md-2">
                         <a th:href="@{/currency-converter/zar-to-usd}">
-                            <img th:src="@{/images/double_arrow.png}" alt="doubleArrow">
+                            <img th:src="@{/images/double_arrow.png}" class="double-arrow" alt="doubleArrow">
                         </a>
                     </div>
                     <div class="form-group col-md-2">
@@ -45,9 +51,35 @@
                 </div>
                 <h1 th:if="${converter.result != null}"
                     th:text="${#numbers.formatDecimal(converter.amount, 0, 'COMMA', 2, 'POINT')} + ' ZAR = ' + ${#numbers.formatDecimal(converter.result, 0, 'COMMA', 2, 'POINT')} + ' USD'"></h1>
-                <button>Convert</button>
+
+                <div th:if="${exchangeRate.exchangeRateValue == null}">
+                    <button disabled onclick="HEJ">Convert</button>
+                </div>
+                <div th:unless="${exchangeRate.exchangeRateValue == null}">
+                    <button >Convert</button>
+                </div>
+
             </fieldset>
         </form>
+        <div class="row">
+            <div class="col-md-3">
+                <h5>Monthly Average = <b th:text="${#numbers.formatDecimal(average, 0, 'COMMA', 4, 'POINT')}"></b><p th:text="${'('+#dates.monthName(#dates.createNow())+')'}"></p></h5>
+                <table id="myTable" class="table table-striped" cellspacing="0" width="100%">
+                    <thead>
+                    <tr >
+                        <th>Date (MM/DD/YYY)</th>
+                        <th>Exchange Rate</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="pastRates : ${lisOfRates}">
+                        <td th:text="${pastRates.date}"></td>
+                        <td th:text="${pastRates.exchangeRateValue}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 

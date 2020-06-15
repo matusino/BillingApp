@@ -1,8 +1,46 @@
 
+body{
+   background:#F1E2D5;
+   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+button {
+  padding: 15px 25px;
+  font-size: 24px;
+  text-align: center;
+  cursor: pointer;
+  outline: none;
+  color: #F1E2D5;
+  background-color: #2A507E;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 9px #999;
+}
+
+button:hover {
+    background-color: #2A507E;
+}
+
+button:active {
+  background-color: #2A507E;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
+
+h1 {
+  font-family: "Arial Black";
+  color:#19304D;
+  padding-bottom:25px;
+}
+
 .wrapper{
   text-align: center;
-
 }
+
+.double-arrow {
+    padding-top:25px;
+}
+
 .zar-flag{
     height: auto;
     width: auto;

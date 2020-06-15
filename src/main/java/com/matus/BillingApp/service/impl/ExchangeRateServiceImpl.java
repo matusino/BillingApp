@@ -16,7 +16,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -32,6 +34,43 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
     @Override
     public ExchangeRate saveNewExchangeRate(ExchangeRate exchangeRate) {
         return exchangeRateRepository.save(exchangeRate);
+    }
+
+    @Override
+    public List<ExchangeRate> findByCurrency(Currency currency) {
+        return exchangeRateRepository.findByCurrencyFrom(currency);
+    }
+
+    @Override
+    public Double findAverageExchangeRate(List<ExchangeRate> list) {
+        List<Double> listOfValues = new ArrayList<>();
+
+        for (ExchangeRate exchangeRate : list){
+            listOfValues.add(exchangeRate.getExchangeRateValue());
+        }
+
+        return listOfValues.stream().mapToDouble(value -> value).average().orElse(0.0);
+    }
+
+    @Override
+    public List<ExchangeRate> findAll() {
+        return exchangeRateRepository.findAll();
+    }
+
+    @Override
+    public List<ExchangeRate> getExchangeRateForLastMonth(List<ExchangeRate> exchangeRates) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        List<ExchangeRate> list = new ArrayList<>();
+
+        for (ExchangeRate exchangeRate : exchangeRates){
+            Month now = LocalDate.now().getMonth();
+            String date  = exchangeRate.getDate();
+            Month monthDB = LocalDate.parse(date, formatter).getMonth();
+            if(monthDB.equals(now)){
+                list.add(exchangeRate);
+            }
+        }
+        return list;
     }
 
     @Override
@@ -56,7 +95,7 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
                     switch (columnIndex){
                         case 0:
                             Date date = nextCell.getDateCellValue();
-                            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                            SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
                             exchangeRate.setDate(formatter.format(date));
                             break;
                         case 1:
@@ -94,10 +133,6 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
 
     @Override
     public List<ExchangeRate> findByDate(String exchangeRateDate) {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        LocalDateTime now = LocalDateTime.now();
-        System.out.println(dtf.format(now));
-
         return exchangeRateRepository.findByDate(exchangeRateDate);
 
     }

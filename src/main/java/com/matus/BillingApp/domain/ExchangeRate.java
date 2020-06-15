@@ -10,10 +10,11 @@ public class ExchangeRate {
 
     @Id
     private String id;
-    private double exchangeRateValue;
+    private Double exchangeRateValue;
 
     @Indexed(direction = IndexDirection.ASCENDING )
     private String date;
+
 
     private Currency currencyFrom;
 
@@ -38,11 +39,11 @@ public class ExchangeRate {
         this.id = id;
     }
 
-    public double getExchangeRateValue() {
+    public Double getExchangeRateValue() {
         return exchangeRateValue;
     }
 
-    public void setExchangeRateValue(double exchangeRateValue) {
+    public void setExchangeRateValue(Double exchangeRateValue) {
         this.exchangeRateValue = exchangeRateValue;
     }
 

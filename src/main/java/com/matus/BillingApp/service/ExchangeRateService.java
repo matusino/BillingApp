@@ -1,5 +1,6 @@
 package com.matus.BillingApp.service;
 
+import com.matus.BillingApp.domain.Currency;
 import com.matus.BillingApp.domain.ExchangeRate;
 import org.springframework.stereotype.Service;
 
@@ -14,5 +15,13 @@ public interface ExchangeRateService {
     List<ExchangeRate> getNewExchangeRate(String path);
 
     List<ExchangeRate> findByDate(String date);
+
+    List<ExchangeRate> findByCurrency(Currency currency);
+
+    List<ExchangeRate> findAll();
+
+    List<ExchangeRate> getExchangeRateForLastMonth(List<ExchangeRate> exchangeRates);
+
+    Double findAverageExchangeRate(List<ExchangeRate> list);
 
 }

@@ -36,14 +36,16 @@ public class CurrencyConverterController {
                     if(!converter.getAmount().isEmpty()){
                         double amount = Double.parseDouble(converter.getAmount());
                         double roundOff = (double) Math.round((amount/exchangeRate.getExchangeRateValue()) * 100) / 100;
+                        List<ExchangeRate> historyOfRates = exchangeRateService.getExchangeRateForLastMonth(exchangeRateService.findByCurrency(Currency.USD));
+                        Double average =  exchangeRateService.findAverageExchangeRate(historyOfRates);
                         String result = String.valueOf(roundOff);
                         model.addAttribute("exchangeRate", exchangeRate);
                         model.addAttribute("converter", new CurrencyConverter(converter.getAmount(), converter.getExchangeRateValue(), result));
+                        model.addAttribute("lisOfRates", historyOfRates);
+                        model.addAttribute("average", average);
                         return "usdtozar";
                     }else {
-                        model.addAttribute("exchangeRate", exchangeRate);
-                        model.addAttribute("converter", new CurrencyConverter());
-                        return "usdtozar";
+                        return "redirect:/currency-converter/usd-to-zar";
                     }
                 }
             }
@@ -65,19 +67,20 @@ public class CurrencyConverterController {
                     if(!converter.getAmount().isEmpty()){
                         double amount = Double.parseDouble(converter.getAmount());
                         double roundOff = (double) Math.round((amount/exchangeRate.getExchangeRateValue()) * 100) / 100;
+                        List<ExchangeRate> historyOfRates = exchangeRateService.getExchangeRateForLastMonth(exchangeRateService.findByCurrency(Currency.ZAR));
+                        Double average =  exchangeRateService.findAverageExchangeRate(historyOfRates);
                         String result = String.valueOf(roundOff);
                         model.addAttribute("exchangeRate", exchangeRate);
                         model.addAttribute("converter", new CurrencyConverter(converter.getAmount(), converter.getExchangeRateValue(), result));
+                        model.addAttribute("lisOfRates", historyOfRates);
+                        model.addAttribute("average", average);
                         return "zartousd";
                     }else {
-                        model.addAttribute("exchangeRate", exchangeRate);
-                        model.addAttribute("converter", new CurrencyConverter());
-                        return "zartousd";
+                        return "redirect:/currency-converter/zar-to-usd";
                     }
                 }
             }
         }
         return "zartousd";
     }
-
 }

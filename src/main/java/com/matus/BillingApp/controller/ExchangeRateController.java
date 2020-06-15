@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -21,9 +22,9 @@ public class ExchangeRateController {
         this.exchangeRateService = exchangeRateService;
     }
 
-    @RequestMapping(value = "/main")
+    @RequestMapping(value = "/")
     public String viewMainPage(){
-        return "main";
+        return "redirect:/currency-converter/usd-to-zar";
     }
 
     @RequestMapping(value = "/get-new-exchange")
@@ -31,12 +32,21 @@ public class ExchangeRateController {
         //tu dat moznost userovi dat vlastnu adresu k filu...ooo je ale az nakonci uplne..
         String filePath = "C:/Users/Matus/Desktop/box/exchange_rates_to_USD.xlsx";
         List<ExchangeRate> todayRates = exchangeRateService.getNewExchangeRate(filePath);
-        if(todayRates.size() > 0){
-            for (ExchangeRate exchangeRate : todayRates){
-                exchangeRateService.saveNewExchangeRate(exchangeRate);
+
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        LocalDateTime now = LocalDateTime.now();
+
+        List<ExchangeRate> exchangeRateFrombB = exchangeRateService.findByDate(dtf.format(now));
+
+        if(!todayRates.isEmpty()) {//check whether we have something in file
+            if(exchangeRateFrombB.isEmpty()) {//check if ER with today date is already in DB
+                for (ExchangeRate todayExchangeRate : todayRates) {
+                    if (todayExchangeRate.getDate().equals(dtf.format(now))) {//check if date in excel is updated to today
+                        exchangeRateService.saveNewExchangeRate(todayExchangeRate);
+                    }
+                }
             }
-        }
-        else {
+        }else {
             return "missingfile";
         }
         return "redirect:/currency-converter/usd-to-zar";
@@ -47,14 +57,25 @@ public class ExchangeRateController {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy");
         LocalDateTime now = LocalDateTime.now();
 
+        List<ExchangeRate> historyOfRates = exchangeRateService.getExchangeRateForLastMonth(exchangeRateService.findByCurrency(Currency.USD));
         List<ExchangeRate> exchangeRateDB = exchangeRateService.findByDate(dtf.format(now));
+
+        Double average =  exchangeRateService.findAverageExchangeRate(historyOfRates);
+
         if(exchangeRateDB.isEmpty()){
-            return "main";
+            model.addAttribute("today", now);
+            model.addAttribute("exchangeRate", new ExchangeRate());
+            model.addAttribute("converter", new CurrencyConverter());
+            model.addAttribute("lisOfRates", historyOfRates);
+            model.addAttribute("average", average);
+            return "usdtozar";
         }else {
             for (ExchangeRate exchangeRate : exchangeRateDB){
                 if(exchangeRate.getCurrencyFrom().equals(Currency.USD)){
                     model.addAttribute("exchangeRate", exchangeRate);
                     model.addAttribute("converter", new CurrencyConverter());
+                    model.addAttribute("lisOfRates", historyOfRates);
+                    model.addAttribute("average", average);
                     return "usdtozar";
                 }
             }
@@ -67,14 +88,34 @@ public class ExchangeRateController {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy");
         LocalDateTime now = LocalDateTime.now();
 
+        List<ExchangeRate> historyOfRates = exchangeRateService.getExchangeRateForLastMonth(exchangeRateService.findByCurrency(Currency.ZAR));
         List<ExchangeRate> exchangeRateDB = exchangeRateService.findByDate(dtf.format(now));
-        for (ExchangeRate exchangeRate : exchangeRateDB) {
-            if (exchangeRate.getCurrencyFrom().equals(Currency.ZAR)) {
-                model.addAttribute("exchangeRate", exchangeRate);
-                model.addAttribute("converter", new CurrencyConverter());
-                return "zartousd";
+
+        Double average =  exchangeRateService.findAverageExchangeRate(historyOfRates);
+
+        if(exchangeRateDB.isEmpty()){
+            model.addAttribute("today", now);
+            model.addAttribute("exchangeRate", new ExchangeRate());
+            model.addAttribute("converter", new CurrencyConverter());
+            model.addAttribute("lisOfRates", historyOfRates);
+            model.addAttribute("average", average);
+            return "zartousd";
+        }else {
+            for (ExchangeRate exchangeRate : exchangeRateDB){
+                if(exchangeRate.getCurrencyFrom().equals(Currency.USD)){
+                    model.addAttribute("exchangeRate", exchangeRate);
+                    model.addAttribute("converter", new CurrencyConverter());
+                    model.addAttribute("lisOfRates", historyOfRates);
+                    model.addAttribute("average", average);
+                    return "zartousd";
+                }
             }
         }
         return "zartousd";
     }
+
+//    @RequestMapping(value = "/.....")
+//    public String adjustHistoryOfExchangeRate(){
+//
+//    }
 }
