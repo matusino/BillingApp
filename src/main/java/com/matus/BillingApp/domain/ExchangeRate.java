@@ -4,6 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.IndexDirection;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Document(collection = "ExchangeRate")
 public class ExchangeRate {
@@ -13,6 +14,7 @@ public class ExchangeRate {
     private Double exchangeRateValue;
 
     @Indexed(direction = IndexDirection.ASCENDING )
+    @DateTimeFormat(pattern = "MM/dd/yyyy")
     private String date;
 
 

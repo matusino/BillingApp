@@ -17,6 +17,15 @@
         <div class="row">
             <div class="col-md-3">
                 <h5>Monthly Average = <b th:text="${#numbers.formatDecimal(average, 0, 'COMMA', 4, 'POINT')}"></b><p th:text="${'('+#dates.monthName(#dates.createNow())+')'}"></p></h5>
+                <form th:action="@{/add-new-er/{currency}(currency=${currency})} " th:object="${exchangeRate}" method="post">
+                    <label for="date">
+                        <input type="date" th:field="*{date}" id="date" required=>
+                    </label>
+                    <label for="exchangeRateValue">
+                        <input type="number" th:field="*{exchangeRateValue}" id="exchangeRateValue" required>
+                    </label>
+                    <button>ADD</button>
+                </form>
                 <table id="myTable" class="table table-striped" cellspacing="0" width="100%">
                     <thead>
                     <tr >
@@ -25,9 +34,13 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="pastRates : ${lisOfRates}">
-                        <td th:text="${pastRates.date}"></td>
-                        <td th:text="${pastRates.exchangeRateValue}"></td>
+                    <tr th:each="rate : ${rates}">
+                        <td th:text="${rate.date}"></td>
+                        <td th:text="${rate.exchangeRateValue}"></td>
+                        <td>
+                            <a th:href="@{/delete/{exchangeRateId}}">Delete</a>
+                            <!--dorobit nefunguje delete, asi toto idcko neposielam dalej -->
+                        </td>
                     </tr>
                     </tbody>
                 </table>

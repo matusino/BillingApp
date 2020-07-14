@@ -36,7 +36,7 @@
                     </div>
                     <div class="col-md-2">
                         <a th:href="@{/currency-converter/usd-to-zar}">
-                            <img th:src="@{/images/double_arrow.png}" alt="doubleArrow">
+                            <img th:src="@{/images/double_arrow.png}" class="double-arrow" alt="doubleArrow">
                         </a>
                     </div>
                     <div class="form-group col-md-2">
@@ -67,9 +67,8 @@
                         <td th:text="${pastRates.exchangeRateValue}"></td>
                     </tr>
                     </tbody>
-
                 </table>
-                <a th:href=@{/} class="btn btn-success">Adjust manually</a>
+                <a th:href=@{/history-of-rates/ZAR} class="btn btn-success">Adjust manually</a>
             </div>
         </div>
     </div>

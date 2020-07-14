@@ -16,7 +16,7 @@
         <h1>Currency converter USD/ZAR</h1>
         <div th:if="${exchangeRate.exchangeRateValue == null}">
             <h5 th:text="${#temporals.format(today, 'dd-MM-yyyy') + ' -please get the current rate'}"></h5>
-            <a th:href="@{/get-new-exchange/{USD}}" class="btn btn-secondary">Get today rate</a>
+            <a th:href="@{/get-new-exchange}" class="btn btn-secondary">Get today rate</a>
         </div>
         <div th:unless="${exchangeRate.exchangeRateValue == null}">
             <h4 th:text="${'1 USD = ' + exchangeRate.exchangeRateValue + ' ZAR'}"></h4>
@@ -78,6 +78,7 @@
                     </tr>
                     </tbody>
                 </table>
+                <a th:href=@{/history-of-rates/USD} class="btn btn-success">Adjust manually</a>
             </div>
         </div>
     </div>
