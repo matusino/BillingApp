@@ -1,10 +1,28 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <script src="https://kit.fontawesome.com/3e4f3f39b8.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link th:href="@{/css/style.css}" rel="stylesheet" media="screen">
+
     <title>Title</title>
 </head>
 <body>
-<h1>OKEJ NENI TU FILE</h1>
+<div class="container-fluid">
+    <div class="wrapper">
+        <h1>Cannot load data from source. Error might cause: </h1>
+    </div>
+    <h2>
+        <ul>
+            <li>Incorrect path to source file</li>
+            <li>Missing file</li>
+            <li>No updated file/exchange rate is already in DB</li>
+        </ul>
+    </h2>
+    <a th:href="@{/currency-converter/usd-to-zar}" role="button" class="btn btn-secondary">BACK</a>
+</div>
 </body>
 </html>

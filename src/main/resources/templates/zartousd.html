@@ -4,19 +4,25 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <script src="https://kit.fontawesome.com/3e4f3f39b8.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
     <link th:href="@{/css/style.css}" rel="stylesheet" media="screen">
 
-    <title>USD TO ZAR</title>
+    <title>ZAR/USD</title>
 </head>
 <body>
 <div class="container-fluid">
     <div class="wrapper">
-        <h1>Currency converter USD/ZAR</h1>
+        <h1>Currency converter ZAR/USD</h1>
         <div th:if="${exchangeRate.exchangeRateValue == null}">
-            <h5 th:text="${#temporals.format(today, 'dd-MM-yyyy') + ' -please get the current rate'}"></h5>
-            <a th:href="@{/get-new-exchange}" class="btn btn-secondary">Get today rate</a>
+            <!--<h5 th:text="${#temporals.format(today, 'dd-MM-yyyy') + ' -please get the current rate'}"></h5>-->
+            <h5>Please fill your full file path to get the current rate in format(C:/your/full/path)</h5>
+            <form th:action="@{/get-new-exchange}">
+                <input type="text" th:name="path">
+                <input type="submit" class="btn btn-secondary">
+            </form>
+            <!--<a th:href="@{/get-new-exchange}" class="btn btn-secondary">Get today rate</a>-->
         </div>
         <div th:unless="${exchangeRate.exchangeRateValue == null}">
             <h4 th:text="${'1 ZAR = ' + exchangeRate.exchangeRateValue + ' USD'}"></h4>
@@ -26,12 +32,14 @@
                 <div class="row">
                     <div class="form-group col-md-3">
                         <label for="amount" class="col-md-4 control-label">Amount </label>
-                        <input type="number" min="1" step="any" id="amount" name="amount" th:field="*{amount}" class="form-control input-md">
+                        <input type="number" min="1" step="any" id="amount" name="amount" th:field="*{amount}"
+                               class="form-control input-md">
                     </div>
                     <div class="form-group col-md-2">
-                        <label for="USD" class="col-md-4 control-label">TO</label>
-                        <div>
-                            <img th:src="@{/images/US_flag.png}" id="USD" class="zar-flag" alt="FLAG"><p>US Dollar</p>
+                        <label for="ZAR" class="col-md-4 control-label">FROM</label>
+                        <div class="zar">
+                            <img th:src="@{/images/SA_flag.png}" id="ZAR" class="zar-flag" alt="FLAG">
+                            <p>South African Rand</p>
                         </div>
                     </div>
                     <div class="col-md-2">
@@ -40,20 +48,27 @@
                         </a>
                     </div>
                     <div class="form-group col-md-2">
-                        <label for="ZAR" class="col-md-4 control-label">FROM</label>
-                        <div class="zar">
-                            <img th:src="@{/images/SA_flag.png}" id="ZAR" class="zar-flag" alt="FLAG"><p>South African Rand</p>
+                        <label for="USD" class="col-md-4 control-label">TO</label>
+                        <div>
+                            <img th:src="@{/images/US_flag.png}" id="USD" class="zar-flag" alt="FLAG">
+                            <p>US Dollar</p>
                         </div>
                     </div>
                 </div>
                 <h1 th:if="${converter.result != null}"
-                    th:text="${#numbers.formatDecimal(converter.amount, 0, 'COMMA', 4, 'POINT')} + ' USD = ' + ${#numbers.formatDecimal(converter.result, 0, 'COMMA', 2, 'POINT')} + ' ZAR'"></h1>
-                <button>Convert</button>
+                    th:text="${#numbers.formatDecimal(converter.amount, 0, 'COMMA', 2, 'POINT')} + ' ZAR = ' + ${#numbers.formatDecimal(converter.result, 0, 'COMMA', 2, 'POINT')} + ' USD'"></h1>
+                <div th:if="${exchangeRate.exchangeRateValue == null}">
+                    <button disabled onclick="HEJ">Convert</button>
+                </div>
+                <div th:unless="${exchangeRate.exchangeRateValue == null}">
+                    <button>Convert</button>
+                </div>
             </fieldset>
         </form>
         <div class="row">
             <div class="col-md-3">
-                <h5>Monthly Average = <b th:text="${#numbers.formatDecimal(average, 0, 'COMMA', 4, 'POINT')}"></b><p th:text="${'('+#dates.monthName(#dates.createNow())+')'}"></p></h5>
+                <h5>Monthly Average = <b th:text="${#numbers.formatDecimal(average, 0, 'COMMA', 4, 'POINT')}"></b>
+                    <p th:text="${'('+#dates.monthName(#dates.createNow())+')'}"></p></h5>
                 <table id="myTable" class="table table-striped" cellspacing="0" width="100%">
                     <thead>
                     <tr>
@@ -68,20 +83,23 @@
                     </tr>
                     </tbody>
                 </table>
-                <a th:href=@{/history-of-rates/ZAR} class="btn btn-success">Adjust manually</a>
+                <a th:href=@{/history-of-rates/{currency}(currency=${currency})} class="btn btn-success">Adjust manually</a>
             </div>
         </div>
     </div>
 </div>
 
 
-
-
-
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
 </body>
 </html>

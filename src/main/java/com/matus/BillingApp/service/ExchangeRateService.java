@@ -18,10 +18,13 @@ public interface ExchangeRateService {
 
     List<ExchangeRate> findByCurrency(Currency currency);
 
-    List<ExchangeRate> findAll();
-
     List<ExchangeRate> getExchangeRateForLastMonth(List<ExchangeRate> exchangeRates);
 
     Double findAverageExchangeRate(List<ExchangeRate> list);
+
+    void deleteExchangeRate (String id);
+
+    ExchangeRate setManualExchangeRate(ExchangeRate exchangeRate, String date, Currency currencyFrom, Currency currencyTo);
+
 
 }

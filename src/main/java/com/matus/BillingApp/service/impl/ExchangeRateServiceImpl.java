@@ -17,7 +17,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -50,11 +49,6 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
         }
 
         return listOfValues.stream().mapToDouble(value -> value).average().orElse(0.0);
-    }
-
-    @Override
-    public List<ExchangeRate> findAll() {
-        return exchangeRateRepository.findAll();
     }
 
     @Override
@@ -137,67 +131,16 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
 
     }
 
-    public static void main(String[] args) {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-        LocalDateTime now = LocalDateTime.now();
+    @Override
+    public void deleteExchangeRate(String id) {
+        exchangeRateRepository.deleteById(id);
+    }
 
-        System.out.println(dtf.format(now));
-
-
-        String filePath = "C:/Users/Matus/Desktop/box/exchange_rates_to_USD.xlsx";
-        List<ExchangeRate> rates = new ArrayList<>();
-        try {
-            FileInputStream inputStream = new FileInputStream(new File(filePath));
-            Workbook workbook = new XSSFWorkbook(inputStream);
-            Sheet sheet = workbook.getSheetAt(0);
-            Iterator<Row> rows = sheet.rowIterator();
-
-            while(rows.hasNext()){
-                Row nextRow = rows.next();
-                if(nextRow.getRowNum()==0){
-                    continue;
-                }
-                Iterator<Cell> cells = nextRow.cellIterator();
-                ExchangeRate exchangeRate = new ExchangeRate();
-                while(cells.hasNext()){
-                    Cell nextCell = cells.next();
-                    int columnIndex = nextCell.getColumnIndex();
-                    switch (columnIndex){
-                        case 0:
-                            Date date = nextCell.getDateCellValue();
-                            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-                            exchangeRate.setDate(formatter.format(date));
-                            break;
-                        case 1:
-                            if(nextCell.getStringCellValue().equalsIgnoreCase("ZAR")){
-                                exchangeRate.setCurrencyFrom(Currency.ZAR);
-                            }else if(nextCell.getStringCellValue().equalsIgnoreCase("USD")) {
-                                exchangeRate.setCurrencyFrom(Currency.USD);
-                            }
-                            break;
-                        case 2:
-                            if(nextCell.getStringCellValue().equalsIgnoreCase("ZAR")){
-                                exchangeRate.setCurrencyTo(Currency.ZAR);
-                            }else if(nextCell.getStringCellValue().equalsIgnoreCase("USD")) {
-                                exchangeRate.setCurrencyTo(Currency.USD);
-                            }
-                            break;
-                        case 3:
-                            continue;
-                        case 4:
-                            exchangeRate.setExchangeRateValue(nextCell.getNumericCellValue());
-                            break;
-                    }
-                }
-                rates.add(exchangeRate);
-            }
-            workbook.close();
-            inputStream.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        System.out.println(rates.get(0).getDate());
+    @Override
+    public ExchangeRate setManualExchangeRate(ExchangeRate exchangeRate, String date, Currency currencyFrom, Currency currencyTo) {
+        exchangeRate.setDate(date);
+        exchangeRate.setCurrencyFrom(currencyFrom);
+        exchangeRate.setCurrencyTo(currencyTo);
+        return exchangeRate;
     }
 }

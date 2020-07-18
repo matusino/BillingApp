@@ -15,8 +15,13 @@
     <div class="wrapper">
         <h1>Currency converter USD/ZAR</h1>
         <div th:if="${exchangeRate.exchangeRateValue == null}">
-            <h5 th:text="${#temporals.format(today, 'dd-MM-yyyy') + ' -please get the current rate'}"></h5>
-            <a th:href="@{/get-new-exchange}" class="btn btn-secondary">Get today rate</a>
+            <!--<h5 th:text="${#temporals.format(today, 'dd-MM-yyyy') + ' -please get the current rate'}"></h5>-->
+            <h5>Please fill your full file path to get the current rate in format(C:/your/full/path)</h5>
+            <form th:action="@{/get-new-exchange}">
+                <input type="text" th:name="path">
+                <button type="submit" class="btn btn-secondary">Submit</button>
+            </form>
+            <!--<a th:href="@{/get-new-exchange}" class="btn btn-secondary">Get today rate</a>-->
         </div>
         <div th:unless="${exchangeRate.exchangeRateValue == null}">
             <h4 th:text="${'1 USD = ' + exchangeRate.exchangeRateValue + ' ZAR'}"></h4>
@@ -30,10 +35,10 @@
                                class="form-control input-md">
                     </div>
                     <div class="form-group col-md-2">
-                        <label for="ZAR" class="col-md-4 control-label">FROM</label>
-                        <div class="zar">
-                            <img th:src="@{/images/SA_flag.png}" id="ZAR" class="zar-flag" alt="FLAG">
-                            <p>South African Rand</p>
+                        <label for="USD" class="col-md-4 control-label">TO</label>
+                        <div>
+                            <img th:src="@{/images/US_flag.png}" id="USD" class="zar-flag" alt="FLAG">
+                            <p>US Dollar</p>
                         </div>
                     </div>
                     <div class="col-md-2">
@@ -42,15 +47,15 @@
                         </a>
                     </div>
                     <div class="form-group col-md-2">
-                        <label for="USD" class="col-md-4 control-label">TO</label>
-                        <div>
-                            <img th:src="@{/images/US_flag.png}" id="USD" class="zar-flag" alt="FLAG">
-                            <p>US Dollar</p>
+                        <label for="ZAR" class="col-md-4 control-label">FROM</label>
+                        <div class="zar">
+                            <img th:src="@{/images/SA_flag.png}" id="ZAR" class="zar-flag" alt="FLAG">
+                            <p>South African Rand</p>
                         </div>
                     </div>
                 </div>
                 <h1 th:if="${converter.result != null}"
-                    th:text="${#numbers.formatDecimal(converter.amount, 0, 'COMMA', 2, 'POINT')} + ' ZAR = ' + ${#numbers.formatDecimal(converter.result, 0, 'COMMA', 2, 'POINT')} + ' USD'"></h1>
+                    th:text="${#numbers.formatDecimal(converter.amount, 0, 'COMMA', 2, 'POINT')} + ' USD = ' + ${#numbers.formatDecimal(converter.result, 0, 'COMMA', 2, 'POINT')} + ' ZAR'"></h1>
 
                 <div th:if="${exchangeRate.exchangeRateValue == null}">
                     <button disabled onclick="HEJ">Convert</button>
@@ -58,7 +63,6 @@
                 <div th:unless="${exchangeRate.exchangeRateValue == null}">
                     <button >Convert</button>
                 </div>
-
             </fieldset>
         </form>
         <div class="row">
@@ -66,7 +70,7 @@
                 <h5>Monthly Average = <b th:text="${#numbers.formatDecimal(average, 0, 'COMMA', 4, 'POINT')}"></b><p th:text="${'('+#dates.monthName(#dates.createNow())+')'}"></p></h5>
                 <table id="myTable" class="table table-striped" cellspacing="0" width="100%">
                     <thead>
-                    <tr >
+                    <tr>
                         <th>Date (MM/DD/YYY)</th>
                         <th>Exchange Rate</th>
                     </tr>
@@ -78,7 +82,7 @@
                     </tr>
                     </tbody>
                 </table>
-                <a th:href=@{/history-of-rates/USD} class="btn btn-success">Adjust manually</a>
+                <a th:href=@{/history-of-rates/{currency}(currency=${currency})} class="btn btn-success">Adjust manually</a>
             </div>
         </div>
     </div>

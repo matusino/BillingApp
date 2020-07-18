@@ -38,13 +38,15 @@
                         <td th:text="${rate.date}"></td>
                         <td th:text="${rate.exchangeRateValue}"></td>
                         <td>
-                            <a th:href="@{/delete/{exchangeRateId}}">Delete</a>
-                            <!--dorobit nefunguje delete, asi toto idcko neposielam dalej -->
+                            <a th:href="@{/delete/exchange-rate/{currency}/{exchangeRateId}(currency=${rate.currencyFrom},exchangeRateId=${rate.id})}">Delete</a>
                         </td>
                     </tr>
                     </tbody>
                 </table>
             </div>
+        </div>
+        <div class="row col-md-1">
+            <a th:href="@{/currency-converter/usd-to-zar}" role="button" class="button">BACK</a>
         </div>
     </div>
 </div>

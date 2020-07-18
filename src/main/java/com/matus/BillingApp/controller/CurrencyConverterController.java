@@ -29,13 +29,13 @@ public class CurrencyConverterController {
 
         List<ExchangeRate> exchangeRateDB = exchangeRateService.findByDate(dtf.format(now));
         if(exchangeRateDB.isEmpty()){
-            return "main";
+            return "redirect:/currency-converter/usd-to-zar";
         }else {
             for (ExchangeRate exchangeRate : exchangeRateDB){
                 if(exchangeRate.getCurrencyFrom().equals(Currency.USD)){
                     if(!converter.getAmount().isEmpty()){
                         double amount = Double.parseDouble(converter.getAmount());
-                        double roundOff = (double) Math.round((amount/exchangeRate.getExchangeRateValue()) * 100) / 100;
+                        double roundOff = (double) Math.round((amount*exchangeRate.getExchangeRateValue()) * 100) / 100;
                         List<ExchangeRate> historyOfRates = exchangeRateService.getExchangeRateForLastMonth(exchangeRateService.findByCurrency(Currency.USD));
                         Double average =  exchangeRateService.findAverageExchangeRate(historyOfRates);
                         String result = String.valueOf(roundOff);
@@ -43,6 +43,7 @@ public class CurrencyConverterController {
                         model.addAttribute("converter", new CurrencyConverter(converter.getAmount(), converter.getExchangeRateValue(), result));
                         model.addAttribute("lisOfRates", historyOfRates);
                         model.addAttribute("average", average);
+                        model.addAttribute("currency", Currency.USD);
                         return "usdtozar";
                     }else {
                         return "redirect:/currency-converter/usd-to-zar";
@@ -60,13 +61,13 @@ public class CurrencyConverterController {
 
         List<ExchangeRate> exchangeRateDB = exchangeRateService.findByDate(dtf.format(now));
         if(exchangeRateDB.isEmpty()){
-            return "main";
+            return "redirect:/currency-converter/zar-to-usd";
         }else {
             for (ExchangeRate exchangeRate : exchangeRateDB){
                 if(exchangeRate.getCurrencyFrom().equals(Currency.ZAR)){
                     if(!converter.getAmount().isEmpty()){
                         double amount = Double.parseDouble(converter.getAmount());
-                        double roundOff = (double) Math.round((amount/exchangeRate.getExchangeRateValue()) * 100) / 100;
+                        double roundOff = (double) Math.round((amount*exchangeRate.getExchangeRateValue()) * 100) / 100;
                         List<ExchangeRate> historyOfRates = exchangeRateService.getExchangeRateForLastMonth(exchangeRateService.findByCurrency(Currency.ZAR));
                         Double average =  exchangeRateService.findAverageExchangeRate(historyOfRates);
                         String result = String.valueOf(roundOff);
@@ -74,6 +75,7 @@ public class CurrencyConverterController {
                         model.addAttribute("converter", new CurrencyConverter(converter.getAmount(), converter.getExchangeRateValue(), result));
                         model.addAttribute("lisOfRates", historyOfRates);
                         model.addAttribute("average", average);
+                        model.addAttribute("currency", Currency.ZAR);
                         return "zartousd";
                     }else {
                         return "redirect:/currency-converter/zar-to-usd";
