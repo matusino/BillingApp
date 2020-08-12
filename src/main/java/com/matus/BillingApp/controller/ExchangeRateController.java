@@ -22,6 +22,12 @@ import java.util.stream.Collectors;
 @Controller
 public class ExchangeRateController {
 
+    private static final String MISSING_INPUT_FILE = "missingfile";
+    private static final String CONVERT_FROM_USD_TO_ZAR = "usdtozar";
+    private static final String CONVERT_FROM_ZAR_TO_USD = "zartousd";
+    private static final String REDIRECT_HISTORY_ZAR = "redirect:/history-of-rates/ZAR";
+    private static final String REDIRECT_HISTORY_USD = "redirect:/history-of-rates/USD";
+
     private final ExchangeRateService exchangeRateService;
 
     public ExchangeRateController(ExchangeRateService exchangeRateService) {
@@ -49,12 +55,12 @@ public class ExchangeRateController {
                     if (todayExchangeRate.getDate().equals(dtf.format(now))) {//check if we have updated excel
                         exchangeRateService.saveNewExchangeRate(todayExchangeRate);
                     }else {
-                        return "missingfile";
+                        return MISSING_INPUT_FILE;
                     }
                 }
             }
         } else {
-            return "missingfile";
+            return MISSING_INPUT_FILE;
         }
         return "redirect:/currency-converter/usd-to-zar";
     }
@@ -80,7 +86,7 @@ public class ExchangeRateController {
             model.addAttribute("lisOfRates", historyOfRates);
             model.addAttribute("average", average);
             model.addAttribute("currency", Currency.USD);
-            return "usdtozar";
+            return CONVERT_FROM_USD_TO_ZAR;
         } else {
             for (ExchangeRate exchangeRate : exchangeRatesDbUsd) {
                 if (exchangeRate.getCurrencyFrom().equals(Currency.USD)) {
@@ -89,11 +95,11 @@ public class ExchangeRateController {
                     model.addAttribute("lisOfRates", historyOfRates);
                     model.addAttribute("average", average);
                     model.addAttribute("currency", Currency.USD);
-                    return "usdtozar";
+                    return CONVERT_FROM_USD_TO_ZAR;
                 }
             }
         }
-        return "usdtozar";
+        return CONVERT_FROM_USD_TO_ZAR;
     }
 
     @RequestMapping(value = "/currency-converter/zar-to-usd")
@@ -118,7 +124,7 @@ public class ExchangeRateController {
             model.addAttribute("lisOfRates", historyOfRates);
             model.addAttribute("average", average);
             model.addAttribute("currency", Currency.ZAR);
-            return "zartousd";
+            return CONVERT_FROM_ZAR_TO_USD;
         } else {
             for (ExchangeRate exchangeRate : exchangeRatesDbZar) {
                 if (exchangeRate.getCurrencyFrom().equals(Currency.ZAR)) {
@@ -128,11 +134,11 @@ public class ExchangeRateController {
                     model.addAttribute("average", average);
                     model.addAttribute("currency", Currency.ZAR);
 
-                    return "zartousd";
+                    return CONVERT_FROM_ZAR_TO_USD;
                 }
             }
         }
-        return "zartousd";
+        return CONVERT_FROM_ZAR_TO_USD;
     }
 
     @RequestMapping(value = "/history-of-rates/{currency}")
@@ -168,20 +174,26 @@ public class ExchangeRateController {
         List<ExchangeRate> exchangeRateFrombB;
         try {
             exchangeRateFrombB = exchangeRateService.findByDate(myFormat.format(fromUser.parse(exchangeRate.getDate())));
-            List<ExchangeRate> usdFromDB = exchangeRateFrombB.stream().filter(er -> er.getCurrencyFrom().equals(Currency.USD)).collect(Collectors.toList());
-            List<ExchangeRate> zarFromDB = exchangeRateFrombB.stream().filter(er -> er.getCurrencyFrom().equals(Currency.ZAR)).collect(Collectors.toList());
+            List<ExchangeRate> usdFromDB = exchangeRateFrombB.stream()
+                    .filter(er -> er.getCurrencyFrom().equals(Currency.USD))
+                    .collect(Collectors.toList());
+
+            List<ExchangeRate> zarFromDB = exchangeRateFrombB.stream()
+                    .filter(er -> er.getCurrencyFrom().equals(Currency.ZAR))
+                    .collect(Collectors.toList());
+
             if (exchangeRate.getExchangeRateValue() != null && !exchangeRate.getDate().isEmpty()) {
                 try {
                     if (zarFromDB.isEmpty() && currency.equals(Currency.ZAR)) {
-                        String reformatedDate = myFormat.format(fromUser.parse(exchangeRate.getDate()));
-                        exchangeRateService.setManualExchangeRate(exchangeRate, reformatedDate, Currency.ZAR, Currency.USD);
+                        String reformattedDate = myFormat.format(fromUser.parse(exchangeRate.getDate()));
+                        exchangeRateService.setManualExchangeRate(exchangeRate, reformattedDate, Currency.ZAR, Currency.USD);
                         exchangeRateService.saveNewExchangeRate(exchangeRate);
-                        return "redirect:/history-of-rates/ZAR";
+                        return REDIRECT_HISTORY_ZAR;
                     } else if (usdFromDB.isEmpty() && currency.equals(Currency.USD)) {
-                        String reformatedDate = myFormat.format(fromUser.parse(exchangeRate.getDate()));
-                        exchangeRateService.setManualExchangeRate(exchangeRate, reformatedDate, Currency.USD, Currency.ZAR);
+                        String reformattedDate = myFormat.format(fromUser.parse(exchangeRate.getDate()));
+                        exchangeRateService.setManualExchangeRate(exchangeRate, reformattedDate, Currency.USD, Currency.ZAR);
                         exchangeRateService.saveNewExchangeRate(exchangeRate);
-                        return "redirect:/history-of-rates/USD";
+                        return REDIRECT_HISTORY_USD;
                     }
                 } catch (ParseException e) {
                     e.printStackTrace();
@@ -191,25 +203,25 @@ public class ExchangeRateController {
             e.printStackTrace();
         }
         if (currency.equals(Currency.ZAR)) {
-            return "redirect:/history-of-rates/ZAR";
+            return REDIRECT_HISTORY_ZAR;
         } else
-            return "redirect:/history-of-rates/USD";
+            return REDIRECT_HISTORY_USD;
     }
 
     @RequestMapping(value = "/delete/exchange-rate/{currency}/{exchangeRateId}")
     public String deleteExchangeRate(@PathVariable String exchangeRateId, @PathVariable Currency currency) {
         exchangeRateService.deleteExchangeRate(exchangeRateId);
         if (currency.equals(Currency.USD)) {
-            return "redirect:/history-of-rates/USD";
+            return REDIRECT_HISTORY_USD;
         } else
-            return "redirect:/history-of-rates/ZAR";
+            return REDIRECT_HISTORY_ZAR;
     }
 
     @RequestMapping(value = "/back")
     public String backButtonForSpecificView(@PathVariable Currency currency) {
         if (currency.equals(Currency.USD)) {
-            return "redirect:/history-of-rates/USD";
+            return REDIRECT_HISTORY_USD;
         } else
-            return "redirect:/history-of-rates/ZAR";
+            return REDIRECT_HISTORY_ZAR;
     }
 }
