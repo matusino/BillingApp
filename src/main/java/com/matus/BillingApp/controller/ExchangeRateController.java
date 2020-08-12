@@ -22,11 +22,11 @@ import java.util.stream.Collectors;
 @Controller
 public class ExchangeRateController {
 
-    private static final String MISSING_INPUT_FILE = "missingfile";
-    private static final String CONVERT_FROM_USD_TO_ZAR = "usdtozar";
-    private static final String CONVERT_FROM_ZAR_TO_USD = "zartousd";
-    private static final String REDIRECT_HISTORY_ZAR = "redirect:/history-of-rates/ZAR";
-    private static final String REDIRECT_HISTORY_USD = "redirect:/history-of-rates/USD";
+    public static final String MISSING_INPUT_FILE = "missingfile";
+    public static final String CONVERT_FROM_USD_TO_ZAR = "usdtozar";
+    public static final String CONVERT_FROM_ZAR_TO_USD = "zartousd";
+    public static final String REDIRECT_HISTORY_ZAR = "redirect:/history-of-rates/ZAR";
+    public static final String REDIRECT_HISTORY_USD = "redirect:/history-of-rates/USD";
 
     private final ExchangeRateService exchangeRateService;
 
