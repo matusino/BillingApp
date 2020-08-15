@@ -21,7 +21,6 @@
                 <input type="text" th:name="path">
                 <button type="submit" class="btn btn-secondary">Submit</button>
             </form>
-            <!--<a th:href="@{/get-new-exchange}" class="btn btn-secondary">Get today rate</a>-->
         </div>
         <div th:unless="${exchangeRate.exchangeRateValue == null}">
             <h4 th:text="${'1 USD = ' + exchangeRate.exchangeRateValue + ' ZAR'}"></h4>

@@ -20,9 +20,8 @@
             <h5>Please fill your full file path to get the current rate in format(C:/your/full/path)</h5>
             <form th:action="@{/get-new-exchange}">
                 <input type="text" th:name="path">
-                <input type="submit" class="btn btn-secondary">
+                <button type="submit" class="btn btn-secondary">Submit</button>
             </form>
-            <!--<a th:href="@{/get-new-exchange}" class="btn btn-secondary">Get today rate</a>-->
         </div>
         <div th:unless="${exchangeRate.exchangeRateValue == null}">
             <h4 th:text="${'1 ZAR = ' + exchangeRate.exchangeRateValue + ' USD'}"></h4>
