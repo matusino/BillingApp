@@ -13,6 +13,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import static com.matus.BillingApp.controller.ExchangeRateController.CONVERT_FROM_USD_TO_ZAR;
+import static com.matus.BillingApp.controller.ExchangeRateController.CONVERT_FROM_ZAR_TO_USD;
+
 @Controller
 public class CurrencyConverterController {
 
@@ -44,14 +47,14 @@ public class CurrencyConverterController {
                         model.addAttribute("lisOfRates", historyOfRates);
                         model.addAttribute("average", average);
                         model.addAttribute("currency", Currency.USD);
-                        return "usdtozar";
+                        return CONVERT_FROM_USD_TO_ZAR;
                     }else {
                         return "redirect:/currency-converter/usd-to-zar";
                     }
                 }
             }
         }
-        return "usdtozar";
+        return CONVERT_FROM_USD_TO_ZAR;
     }
 
     @RequestMapping(value = "/convert/zar-to-usd")
@@ -76,13 +79,13 @@ public class CurrencyConverterController {
                         model.addAttribute("lisOfRates", historyOfRates);
                         model.addAttribute("average", average);
                         model.addAttribute("currency", Currency.ZAR);
-                        return "zartousd";
+                        return CONVERT_FROM_ZAR_TO_USD;
                     }else {
                         return "redirect:/currency-converter/zar-to-usd";
                     }
                 }
             }
         }
-        return "zartousd";
+        return CONVERT_FROM_ZAR_TO_USD;
     }
 }
