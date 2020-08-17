@@ -6,6 +6,8 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.util.Objects;
+
 @Document(collection = "ExchangeRate")
 public class ExchangeRate {
 
@@ -84,5 +86,20 @@ public class ExchangeRate {
                 '}';
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ExchangeRate that = (ExchangeRate) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(exchangeRateValue, that.exchangeRateValue) &&
+                Objects.equals(date, that.date) &&
+                currencyFrom == that.currencyFrom &&
+                currencyTo == that.currencyTo;
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, exchangeRateValue, date, currencyFrom, currencyTo);
+    }
 }
