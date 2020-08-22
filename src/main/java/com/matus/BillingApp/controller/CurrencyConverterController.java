@@ -38,7 +38,7 @@ public class CurrencyConverterController {
                 if(exchangeRate.getCurrencyFrom().equals(Currency.USD)){
                     if(!converter.getAmount().isEmpty()){
                         double amount = Double.parseDouble(converter.getAmount());
-                        double roundOff = (double) Math.round((amount*exchangeRate.getExchangeRateValue()) * 100) / 100;
+                        double roundOff = (double) Math.round((amount*exchangeRate.getExchangeRateValue()) * 100) / 100;//extract to method
                         List<ExchangeRate> historyOfRates = exchangeRateService.getExchangeRateForLastMonth(exchangeRateService.findByCurrency(Currency.USD));
                         Double average =  exchangeRateService.findAverageExchangeRate(historyOfRates);
                         String result = String.valueOf(roundOff);
