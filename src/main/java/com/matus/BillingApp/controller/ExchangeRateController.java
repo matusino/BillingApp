@@ -217,11 +217,11 @@ public class ExchangeRateController {
             return REDIRECT_HISTORY_ZAR;
     }
 
-    @RequestMapping(value = "/back")
-    public String backButtonForSpecificView(@PathVariable Currency currency) {
-        if (currency.equals(Currency.USD)) {
-            return REDIRECT_HISTORY_USD;
-        } else
-            return REDIRECT_HISTORY_ZAR;
-    }
+//    @RequestMapping(value = "/back")
+//    public String backButtonForSpecificView(@PathVariable Currency currency) {
+//        if (currency.equals(Currency.USD)) {
+//            return REDIRECT_HISTORY_USD;
+//        } else
+//            return REDIRECT_HISTORY_ZAR;
+//    }
 }
