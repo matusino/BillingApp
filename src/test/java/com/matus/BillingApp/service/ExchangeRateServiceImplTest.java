@@ -11,10 +11,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.time.LocalDate;
-import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -143,7 +139,7 @@ class ExchangeRateServiceImplTest {
     }
 
     @Test
-    void getExhcangeRateFromLastMonth(){
+    void getExchangeRateFromLastMonth(){
         //given
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
         List<ExchangeRate> exchangeRates = new ArrayList<>();
