@@ -13,8 +13,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import static com.matus.BillingApp.controller.ExchangeRateController.CONVERT_FROM_USD_TO_ZAR;
-import static com.matus.BillingApp.controller.ExchangeRateController.CONVERT_FROM_ZAR_TO_USD;
+import static com.matus.BillingApp.controller.ExchangeRateController.*;
 
 @Controller
 public class CurrencyConverterController {
@@ -32,7 +31,7 @@ public class CurrencyConverterController {
 
         List<ExchangeRate> exchangeRateDB = exchangeRateService.findByDate(dtf.format(now));
         if(exchangeRateDB.isEmpty()){
-            return "redirect:/currency-converter/usd-to-zar";
+            return REDIRECT_CURRENCY_CONVERTER_USD_TO_ZAR;
         }else {
             for (ExchangeRate exchangeRate : exchangeRateDB){
                 if(exchangeRate.getCurrencyFrom().equals(Currency.USD)){
@@ -49,7 +48,7 @@ public class CurrencyConverterController {
                         model.addAttribute("currency", Currency.USD);
                         return CONVERT_FROM_USD_TO_ZAR;
                     }else {
-                        return "redirect:/currency-converter/usd-to-zar";
+                        return REDIRECT_CURRENCY_CONVERTER_USD_TO_ZAR;
                     }
                 }
             }
@@ -64,7 +63,7 @@ public class CurrencyConverterController {
 
         List<ExchangeRate> exchangeRateDB = exchangeRateService.findByDate(dtf.format(now));
         if(exchangeRateDB.isEmpty()){
-            return "redirect:/currency-converter/zar-to-usd";
+            return REDIRECT_CURRENCY_CONVERTER_ZAR_TO_USD;
         }else {
             for (ExchangeRate exchangeRate : exchangeRateDB){
                 if(exchangeRate.getCurrencyFrom().equals(Currency.ZAR)){
@@ -81,7 +80,7 @@ public class CurrencyConverterController {
                         model.addAttribute("currency", Currency.ZAR);
                         return CONVERT_FROM_ZAR_TO_USD;
                     }else {
-                        return "redirect:/currency-converter/zar-to-usd";
+                        return REDIRECT_CURRENCY_CONVERTER_ZAR_TO_USD;
                     }
                 }
             }

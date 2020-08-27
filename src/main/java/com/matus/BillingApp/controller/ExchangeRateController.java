@@ -27,6 +27,8 @@ public class ExchangeRateController {
     public static final String CONVERT_FROM_ZAR_TO_USD = "zartousd";
     public static final String REDIRECT_HISTORY_ZAR = "redirect:/history-of-rates/ZAR";
     public static final String REDIRECT_HISTORY_USD = "redirect:/history-of-rates/USD";
+    public static final String REDIRECT_CURRENCY_CONVERTER_USD_TO_ZAR = "redirect:/currency-converter/usd-to-zar";
+    public static final String REDIRECT_CURRENCY_CONVERTER_ZAR_TO_USD = "redirect:/currency-converter/zar-to-usd";
 
     private final ExchangeRateService exchangeRateService;
 
@@ -36,7 +38,7 @@ public class ExchangeRateController {
 
     @RequestMapping(value = "/")
     public String viewMainPage() {
-        return "redirect:/currency-converter/usd-to-zar";
+        return REDIRECT_CURRENCY_CONVERTER_USD_TO_ZAR;
     }
 
     @RequestMapping(value = "/get-new-exchange")
@@ -62,7 +64,7 @@ public class ExchangeRateController {
         } else {
             return MISSING_INPUT_FILE;
         }
-        return "redirect:/currency-converter/usd-to-zar";
+        return REDIRECT_CURRENCY_CONVERTER_USD_TO_ZAR;
     }
 
     @RequestMapping(value = "/currency-converter/usd-to-zar")
