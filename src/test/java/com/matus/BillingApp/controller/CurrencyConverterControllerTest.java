@@ -17,6 +17,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.matus.BillingApp.controller.ExchangeRateController.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -32,32 +33,43 @@ class CurrencyConverterControllerTest {
 
     private MockMvc mockMvc;
 
+    private DateTimeFormatter dtf;
+
+    private  LocalDateTime now;
+
+    private ExchangeRate exchangeRateFromUsd;
+
+    private ExchangeRate exchangeRateFromZar;
+
+    private List<ExchangeRate> list;
+
+
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(converterController).build();
+
+        exchangeRateFromUsd = new ExchangeRate("1", 12.0,"08/20/2020", Currency.USD, Currency.ZAR);
+        exchangeRateFromZar = new ExchangeRate("1", 12.0,"08/20/2020", Currency.ZAR, Currency.USD);
+
+        list = new ArrayList<>();
+
+        dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        now = LocalDateTime.now();
     }
 
     @Test
     void convertUsdToZarNotFoundAnyTest() throws Exception {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-        LocalDateTime now = LocalDateTime.now();
-        List<ExchangeRate> list= new ArrayList<>();
         given(exchangeRateService.findByDate(dtf.format(now))).willReturn(list);
 
         mockMvc.perform(get("/convert/usd-to-zar"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/currency-converter/usd-to-zar"));
+                .andExpect(view().name(REDIRECT_CURRENCY_CONVERTER_USD_TO_ZAR));
     }
 
     @Test
     void convertUsdToZarFoundDateTest() throws Exception {
         //given
-        List<ExchangeRate> list= new ArrayList<>();
-        ExchangeRate exchangeRate = new ExchangeRate("1", 12.0,"08/20/2020", Currency.USD, Currency.ZAR);
-        list.add(exchangeRate);
-
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-        LocalDateTime now = LocalDateTime.now();
+        list.add(exchangeRateFromUsd);
 
         given(exchangeRateService.findByDate(dtf.format(now))).willReturn(list);
 
@@ -69,28 +81,55 @@ class CurrencyConverterControllerTest {
                 .andExpect(model().attributeExists("lisOfRates"))
                 .andExpect(model().attributeExists("average"))
                 .andExpect(model().attributeExists("currency"))
-                .andExpect(view().name("usdtozar"));
+                .andExpect(view().name(CONVERT_FROM_USD_TO_ZAR));
     }
     @Test
     void convertUsdToZarNotFoundUsd() throws Exception {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-        LocalDateTime now = LocalDateTime.now();
-
-        List<ExchangeRate> list= new ArrayList<>();
-        ExchangeRate exchangeRate = new ExchangeRate("1", 12.0,dtf.format(now), Currency.USD, Currency.ZAR);
-
-
-        list.add(exchangeRate);
+        list.add(exchangeRateFromUsd);
 
         given(exchangeRateService.findByDate(dtf.format(now))).willReturn(list);
 
         mockMvc.perform(get("/convert/usd-to-zar")
                 .param("amount", ""))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/currency-converter/usd-to-zar"));
+                .andExpect(view().name(REDIRECT_CURRENCY_CONVERTER_USD_TO_ZAR));
     }
 
     @Test
-    void convertZarToUsd() {
+    void convertZarToUsdNotFoundAnyTest() throws Exception {
+        given(exchangeRateService.findByDate(dtf.format(now))).willReturn(list);
+
+        mockMvc.perform(get("/convert/zar-to-usd"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name(REDIRECT_CURRENCY_CONVERTER_ZAR_TO_USD));
+    }
+
+    @Test
+    void convertZarToUsdFoundDateTest() throws Exception {
+        //given
+        list.add(exchangeRateFromZar);
+
+        given(exchangeRateService.findByDate(dtf.format(now))).willReturn(list);
+
+        mockMvc.perform(get("/convert/zar-to-usd")
+                .param("amount", "12"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("exchangeRate"))
+                .andExpect(model().attributeExists("converter"))
+                .andExpect(model().attributeExists("lisOfRates"))
+                .andExpect(model().attributeExists("average"))
+                .andExpect(model().attributeExists("currency"))
+                .andExpect(view().name(CONVERT_FROM_ZAR_TO_USD));
+    }
+    @Test
+    void convertZarToUsdNotFound() throws Exception {
+        list.add(exchangeRateFromZar);
+
+        given(exchangeRateService.findByDate(dtf.format(now))).willReturn(list);
+
+        mockMvc.perform(get("/convert/zar-to-usd")
+                .param("amount", ""))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name(REDIRECT_CURRENCY_CONVERTER_ZAR_TO_USD));
     }
 }

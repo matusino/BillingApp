@@ -11,6 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -141,11 +142,14 @@ class ExchangeRateServiceImplTest {
     @Test
     void getExchangeRateFromLastMonth(){
         //given
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+
         List<ExchangeRate> exchangeRates = new ArrayList<>();
         ExchangeRate testRate = new ExchangeRate();
         ExchangeRate testRate2 = new ExchangeRate();
-        testRate.setDate("08/12/2021");
+        testRate.setDate(dtf.format(now));
         testRate2.setDate("07/12/2021");
         exchangeRates.add(testRate);
         exchangeRates.add(testRate2);

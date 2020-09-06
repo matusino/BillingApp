@@ -3,26 +3,22 @@ package com.matus.BillingApp.controller;
 import com.matus.BillingApp.domain.Currency;
 import com.matus.BillingApp.domain.ExchangeRate;
 import com.matus.BillingApp.service.ExchangeRateService;
-import com.matus.BillingApp.util.CurrencyConverter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.lang.reflect.Array;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.matus.BillingApp.controller.ExchangeRateController.MISSING_INPUT_FILE;
+import static com.matus.BillingApp.controller.ExchangeRateController.*;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.*;
@@ -44,10 +40,6 @@ class ExchangeRateControllerTest {
     private DateTimeFormatter dtf;
 
     private LocalDateTime now;
-
-    //given
-    //when
-    //then
 
     @BeforeEach
     void setUp() {
@@ -82,9 +74,8 @@ class ExchangeRateControllerTest {
 
     @Test
     void getTodayExchangeRateSuccess() throws Exception {
-        List<ExchangeRate> todayRate = new ArrayList<>();
+        List<ExchangeRate> todayRate = Arrays.asList(new ExchangeRate());
         List<ExchangeRate> rateDB = new ArrayList<>();
-        todayRate.add(new ExchangeRate());
         rateDB.add(new ExchangeRate("1", 12.0,dtf.format(now), Currency.USD, Currency.ZAR));
 
         given(exchangeRateService.getNewExchangeRate("C:/Users/Matus/Desktop/box/exchange_rates_to_USD.xlsx"))
@@ -135,13 +126,13 @@ class ExchangeRateControllerTest {
 
         mockMvc.perform(get("/delete/exchange-rate/{currency}/{exchangeRateId}", Currency.USD, "1"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/history-of-rates/USD"));
+                .andExpect(view().name(REDIRECT_HISTORY_USD));
     }
     @Test
     void deleteExchangeRateByIdZarTest() throws Exception {
         mockMvc.perform(get("/delete/exchange-rate/{currency}/{exchangeRateId}", Currency.ZAR, "1"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/history-of-rates/ZAR"));
+                .andExpect(view().name(REDIRECT_HISTORY_ZAR));
     }
 
     @Test
@@ -156,7 +147,7 @@ class ExchangeRateControllerTest {
 
         mockMvc.perform(get("/currency-converter/usd-to-zar"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("usdtozar"))
+                .andExpect(view().name(CONVERT_FROM_USD_TO_ZAR))
                 .andExpect(model().attributeExists("exchangeRate"))
                 .andExpect(model().attributeExists("converter"))
                 .andExpect(model().attributeExists("lisOfRates"))
@@ -185,7 +176,7 @@ class ExchangeRateControllerTest {
 
         mockMvc.perform(get("/currency-converter/usd-to-zar"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("usdtozar"))
+                .andExpect(view().name(CONVERT_FROM_USD_TO_ZAR))
                 .andExpect(model().attributeExists("exchangeRate"))
                 .andExpect(model().attributeExists("today"))
                 .andExpect(model().attributeExists("converter"))
@@ -206,7 +197,7 @@ class ExchangeRateControllerTest {
 
         mockMvc.perform(get("/currency-converter/zar-to-usd"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("zartousd"))
+                .andExpect(view().name(CONVERT_FROM_ZAR_TO_USD))
                 .andExpect(model().attributeExists("exchangeRate"))
                 .andExpect(model().attributeExists("converter"))
                 .andExpect(model().attributeExists("lisOfRates"))
@@ -235,7 +226,7 @@ class ExchangeRateControllerTest {
 
         mockMvc.perform(get("/currency-converter/zar-to-usd"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("zartousd"))
+                .andExpect(view().name(CONVERT_FROM_ZAR_TO_USD))
                 .andExpect(model().attributeExists("exchangeRate"))
                 .andExpect(model().attributeExists("today"))
                 .andExpect(model().attributeExists("converter"))
@@ -281,7 +272,7 @@ class ExchangeRateControllerTest {
                     .param("date", "2012-12-25")
                     .param("currencyFrom", String.valueOf(exchangeRate.getCurrencyFrom())))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/history-of-rates/ZAR"));
+                .andExpect(view().name(REDIRECT_HISTORY_ZAR));
     }
 
     @Test
@@ -293,7 +284,7 @@ class ExchangeRateControllerTest {
                     .param("date", "2012-12-25")
                     .param("currencyFrom", String.valueOf(exchangeRate.getCurrencyFrom())))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/history-of-rates/USD"));
+                .andExpect(view().name(REDIRECT_HISTORY_USD));
     }
 
     @Test
@@ -301,7 +292,7 @@ class ExchangeRateControllerTest {
         mockMvc.perform(post("/add-new-er/{currency}", Currency.USD)
                     .param("date", "2012-12-25"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/history-of-rates/USD"));
+                .andExpect(view().name(REDIRECT_HISTORY_USD));
     }
 
     @Test
@@ -309,6 +300,6 @@ class ExchangeRateControllerTest {
         mockMvc.perform(post("/add-new-er/{currency}", Currency.USD)
                 .param("date", dtf.format(now)))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/history-of-rates/USD"));
+                .andExpect(view().name(REDIRECT_HISTORY_USD));
     }
 }
